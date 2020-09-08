@@ -204,7 +204,33 @@ int main ()
 		}
 		else if( arr[0].compare("l") == 0 )
 		{
+			if( arr[1].compare("c") == 0 )
+			{
+				std::list<Course>::iterator it1;
+				for (it1 = course_list.begin(); it1 != course_list.end(); ++it1)
+					cout << it1->prefix << " " << it1->number << " " << it1->title << " " << it1->credit << endl;				
+			}
 
+			if( arr[1].compare("g") == 0 )
+			{
+				std::list<Grade>::iterator it1;
+				for (it1 = grade_list.begin(); it1 != grade_list.end(); ++it1)
+					cout << it1->type << " " << it1->score << endl;				
+			}
+
+			if( arr[1].compare("m") == 0 )
+			{
+				std::list<Semester>::iterator it1;
+				for (it1 = semester_list.begin(); it1 != semester_list.end(); ++it1)
+					cout << it1->code << " " << it1->desc << " " << it1->year << endl;				
+			}
+
+			if( arr[1].compare("s") == 0 )
+			{
+				std::list<Student>::iterator it1;
+				for (it1 = student_list.begin(); it1 != student_list.end(); ++it1)
+					cout << it1->last_name << " " << it1->first_name << " " << it1->phone << endl;				
+			}
 		}
 		else if( arr[0].compare("t") == 0 )
 		{
