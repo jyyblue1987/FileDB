@@ -35,6 +35,12 @@ struct Semester {
 	string desc;
 };
 
+struct Take {
+	int student_id;
+	int course_id;
+	int grade_id;	
+	int semester_id;
+};
 
 
 int main ()
@@ -43,6 +49,7 @@ int main ()
 	list<Course> course_list = list<Course>();
 	list<Grade> grade_list = list<Grade>();
 	list<Semester> semester_list = list<Semester>();
+	list<Take> take_list = list<Take>();
 
 	cout << "start program" << endl;
 
@@ -147,6 +154,53 @@ int main ()
 
 				semester_list.push_back(data);
 			}
+
+			if( arr[1].compare("t") == 0 )
+			{
+				// find student id
+				int student_id = 0;
+				std::list<Student>::iterator it;
+				for (it = student_list.begin(); it != student_list.end(); ++it)
+				{
+					if( it->first_name.compare(arr[2]) && it->last_name.compare(arr[3]) )
+						student_id = it->id;
+				}
+
+				// find course id
+				int course_id = 0;
+				std::list<Course>::iterator it1;
+				for (it1 = course_list.begin(); it1 != course_list.end(); ++it1)
+				{
+					if( it1->prefix.compare(arr[4]) && it1->number == stoi(arr[5]) )
+						course_id = it1->id;
+				}
+
+				// find grade id
+				int grade_id = 0;
+				std::list<Grade>::iterator it2;
+				for (it2 = grade_list.begin(); it2 != grade_list.end(); ++it2)
+				{
+					if( it2->type.compare(arr[6]) )
+						grade_id = it2->id;
+				}
+
+				// find semester id
+				int semester_id = 0;
+				std::list<Semester>::iterator it3;
+				for (it3 = semester_list.begin(); it3 != semester_list.end(); ++it3)
+				{
+					if( it3->code.compare(arr[7]) )
+						semester_id = it3->id;
+				}
+
+				Take data;
+				data.student_id = student_id;
+				data.course_id = course_id;
+				data.grade_id = grade_id;
+				data.semester_id = semester_id;
+			
+				take_list.push_back(data);
+			}
 		}
 		else if( arr[0].compare("l") == 0 )
 		{
@@ -165,3 +219,4 @@ int main ()
 	}
 	cout << "end program";
 }
+
