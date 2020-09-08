@@ -20,6 +20,16 @@ struct Course {
 	int credit;
 };
 
+struct Grade {
+	string type;
+	float score;	
+};
+
+struct Semester {
+	string code;
+	int year;	
+	string desc;
+};
 
 
 
@@ -27,6 +37,8 @@ int main ()
 {
 	list<Student> student_list = list<Student>();
 	list<Course> course_list = list<Course>();
+	list<Grade> grade_list = list<Grade>();
+	list<Semester> semester_list = list<Semester>();
 
 	cout << "start program" << endl;
 
@@ -80,6 +92,25 @@ int main ()
 				data.credit = stoi(arr[5]);
 
 				course_list.push_back(data);
+			}
+
+			if( arr[1].compare("g") == 0 )
+			{
+				Grade data;
+				data.type = arr[2];
+				data.score = stof(arr[3]);
+				
+				grade_list.push_back(data);
+			}
+
+			if( arr[1].compare("m") == 0 )
+			{
+				Semester data;
+				data.code = arr[2];
+				data.year = stoi(arr[3]);
+				data.desc = arr[4];
+
+				semester_list.push_back(data);
 			}
 		}
 		else if( arr[0].compare("l") == 0 )
