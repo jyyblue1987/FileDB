@@ -162,7 +162,7 @@ int main ()
 				std::list<Student>::iterator it;
 				for (it = student_list.begin(); it != student_list.end(); ++it)
 				{
-					if( it->first_name.compare(arr[2]) && it->last_name.compare(arr[3]) )
+					if( it->last_name.compare(arr[2]) == 0 && it->first_name.compare(arr[3]) == 0 )
 						student_id = it->id;
 				}
 
@@ -171,7 +171,7 @@ int main ()
 				std::list<Course>::iterator it1;
 				for (it1 = course_list.begin(); it1 != course_list.end(); ++it1)
 				{
-					if( it1->prefix.compare(arr[4]) && it1->number == stoi(arr[5]) )
+					if( it1->prefix.compare(arr[4]) == 0 && it1->number == stoi(arr[5]) )
 						course_id = it1->id;
 				}
 
@@ -180,7 +180,7 @@ int main ()
 				std::list<Grade>::iterator it2;
 				for (it2 = grade_list.begin(); it2 != grade_list.end(); ++it2)
 				{
-					if( it2->type.compare(arr[6]) )
+					if( it2->type.compare(arr[6]) == 0)
 						grade_id = it2->id;
 				}
 
@@ -189,7 +189,7 @@ int main ()
 				std::list<Semester>::iterator it3;
 				for (it3 = semester_list.begin(); it3 != semester_list.end(); ++it3)
 				{
-					if( it3->code.compare(arr[7]) )
+					if( it3->code.compare(arr[7]) == 0)
 						semester_id = it3->id;
 				}
 
@@ -234,7 +234,59 @@ int main ()
 		}
 		else if( arr[0].compare("t") == 0 )
 		{
+			// find student id
+			int student_id = 0;
+			std::list<Student>::iterator it;
+			for (it = student_list.begin(); it != student_list.end(); ++it)
+			{
+				if( it->last_name.compare(arr[1]) == 0 && it->first_name.compare(arr[2]) == 0 )
+					student_id = it->id;
+			}
 
+			if( student_id < 1 )
+			{
+				cout << "Invalid Student" << endl;
+				continue;
+			}
+
+			std::list<Semester>::iterator it3;
+			for (it3 = semester_list.begin(); it3 != semester_list.end(); ++it3)
+			{
+				int semester_id = it3->id;
+
+				std::list<Take>::iterator it4;
+				int count = 0;
+
+				for (it4 = take_list.begin(); it4 != take_list.end(); ++it4)
+				{
+					if( it4->student_id != student_id )
+						continue;
+
+					if( it4->semester_id != semester_id )
+						continue;
+
+					if( count == 0 )
+						cout << "=========== Semester: " << it3->desc << " " << it3->year << " ===========" << endl;
+					
+					// find course id
+					std::list<Course>::iterator it1;
+					for (it1 = course_list.begin(); it1 != course_list.end(); ++it1)
+					{
+						if( it1->id == it4->course_id )
+							cout << it1->prefix << it1->number << " " << it1->title << "(" << it1->credit << ") ";
+					}
+
+					// find grade id					
+					std::list<Grade>::iterator it2;
+					for (it2 = grade_list.begin(); it2 != grade_list.end(); ++it2)
+					{
+						if( it2->id == it4->grade_id )
+							cout << it2->type << endl;
+					}
+
+					count++;
+				}
+			}
 		}
 		else
 		{
