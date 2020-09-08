@@ -8,16 +8,25 @@ using namespace std;
 #define MAX_STRING_LENGTH 100
 #define MAX_PARAM 10
 struct Student {
-	char last_name[MAX_STRING_LENGTH];
-	char first_name[MAX_STRING_LENGTH];
-	char phone[MAX_STRING_LENGTH];
+	string last_name;
+	string first_name;
+	string phone;
 };
+
+struct Course {
+	string prefix;
+	int number;
+	string title;
+	int credit;
+};
+
 
 
 
 int main ()
 {
 	list<Student> student_list = list<Student>();
+	list<Course> course_list = list<Course>();
 
 	cout << "start program" << endl;
 
@@ -54,12 +63,23 @@ int main ()
 
 			if( arr[1].compare("s") == 0 )
 			{
-				Student stu1;
-				strcpy(stu1.last_name, arr[2].c_str());
-				strcpy(stu1.first_name, arr[3].c_str());
-				strcpy(stu1.phone, arr[4].c_str());
+				Student data;
+				data.last_name = arr[2];
+				data.first_name = arr[3];
+				data.phone = arr[4];
 
-				student_list.push_back(stu1);
+				student_list.push_back(data);
+			}
+
+			if( arr[1].compare("c") == 0 )
+			{
+				Course data;
+				data.prefix = arr[2];
+				data.number = stoi(arr[3]);
+				data.title = arr[4];
+				data.credit = stoi(arr[5]);
+
+				course_list.push_back(data);
 			}
 		}
 		else if( arr[0].compare("l") == 0 )
