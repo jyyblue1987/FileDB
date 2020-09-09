@@ -363,6 +363,42 @@ int main ()
 				for (it1 = student_list.begin(); it1 != student_list.end(); ++it1)
 					cout << it1->last_name << " " << it1->first_name << " " << it1->phone << endl;				
 			}
+
+			if( arr[1].compare("t") == 0 )
+			{
+				std::list<Take>::iterator it1;
+				for (it1 = take_list.begin(); it1 != take_list.end(); ++it1)
+				{
+					std::list<Student>::iterator it2;
+					for (it2 = student_list.begin(); it2 != student_list.end(); ++it2)
+					{
+						if( it1->student_id == it2->id )
+							cout << it2->last_name << " " << it2->first_name << " ";
+					}
+
+					std::list<Semester>::iterator it4;
+					for (it4 = semester_list.begin(); it4 != semester_list.end(); ++it4)
+					{
+						if( it1->semester_id == it4->id )
+							cout << it4->code << " ";
+					}
+
+					std::list<Course>::iterator it3;
+					for (it3 = course_list.begin(); it3 != course_list.end(); ++it3)
+					{
+						if( it1->course_id == it3->id )
+							cout << it3->prefix << " " << it3->number << " " << it3->title << " ";
+					}
+
+					std::list<Grade>::iterator it5;
+					for (it5 = grade_list.begin(); it5 != grade_list.end(); ++it5)
+					{
+						if( it1->grade_id == it5->id )
+							cout << it5->type;
+					}
+					cout << endl;
+				}
+			}
 		}
 		else if( arr[0].compare("t") == 0 )
 		{
