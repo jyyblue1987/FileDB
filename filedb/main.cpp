@@ -53,6 +53,8 @@ int main ()
 	list<Take> take_list = list<Take>();
 
 	string param;
+
+	cout << "start program" << endl;
 	
 	// read student list
 	std::ifstream infile("student.txt");	
@@ -76,7 +78,93 @@ int main ()
 		student_list.push_back(data);
 	}
 
-	cout << "start program" << endl;
+	// read course list
+	std::ifstream infile1("course.txt");	
+	while (std::getline(infile1, param))
+	{
+		string arr[MAX_PARAM];
+		int param_count = 0;
+		stringstream ssin(param);
+		while (ssin.good() && param_count < MAX_PARAM)
+		{
+			ssin >> arr[param_count];
+			++param_count;
+		}
+
+		Course data;
+		data.id = stoi(arr[0]);
+		data.prefix = arr[1];
+		data.number = stoi(arr[2]);
+		data.title = arr[3];
+		data.credit = stoi(arr[4]);
+
+		course_list.push_back(data);
+	}
+
+	// read grade list
+	std::ifstream infile2("grade.txt");	
+	while (std::getline(infile2, param))
+	{
+		string arr[MAX_PARAM];
+		int param_count = 0;
+		stringstream ssin(param);
+		while (ssin.good() && param_count < MAX_PARAM)
+		{
+			ssin >> arr[param_count];
+			++param_count;
+		}
+
+		Grade data;
+		data.id = stoi(arr[0]);
+		data.type = arr[1];
+		data.score = stof(arr[2]);
+
+		grade_list.push_back(data);
+	}
+
+	// read semester list
+	std::ifstream infile3("semester.txt");	
+	while (std::getline(infile3, param))
+	{
+		string arr[MAX_PARAM];
+		int param_count = 0;
+		stringstream ssin(param);
+		while (ssin.good() && param_count < MAX_PARAM)
+		{
+			ssin >> arr[param_count];
+			++param_count;
+		}
+
+		Semester data;
+		data.id = stoi(arr[0]);
+		data.code = arr[1];
+		data.year = stoi(arr[2]);
+		data.desc = arr[3];
+
+		semester_list.push_back(data);
+	}
+	
+	// read take list
+	std::ifstream infile4("take.txt");	
+	while (std::getline(infile4, param))
+	{
+		string arr[MAX_PARAM];
+		int param_count = 0;
+		stringstream ssin(param);
+		while (ssin.good() && param_count < MAX_PARAM)
+		{
+			ssin >> arr[param_count];
+			++param_count;
+		}
+
+		Take data;
+		data.student_id = stoi(arr[0]);
+		data.course_id = stoi(arr[1]);
+		data.grade_id = stoi(arr[2]);
+		data.semester_id = stoi(arr[3]);
+
+		take_list.push_back(data);
+	}
 
 
 	while(true)
@@ -125,7 +213,6 @@ int main ()
 				student_list.push_back(data);
 
 				std::ofstream outfile;
-
 				outfile.open("student.txt", std::ios_base::app); // append instead of overwrite
 				outfile << data.id << " " << data.last_name << " " << data.first_name << " " << data.phone << endl; 
 			}
@@ -147,6 +234,10 @@ int main ()
 				data.credit = stoi(arr[5]);
 
 				course_list.push_back(data);
+
+				std::ofstream outfile;
+				outfile.open("course.txt", std::ios_base::app); // append instead of overwrite
+				outfile << data.id << " " << data.prefix << " " << data.number << " " << data.title << " " << data.credit << endl; 
 			}
 
 			if( arr[1].compare("g") == 0 )
@@ -164,6 +255,10 @@ int main ()
 				data.score = stof(arr[3]);
 				
 				grade_list.push_back(data);
+
+				std::ofstream outfile;
+				outfile.open("grade.txt", std::ios_base::app); // append instead of overwrite
+				outfile << data.id << " " << data.type << " " << data.score << endl; 
 			}
 
 			if( arr[1].compare("m") == 0 )
@@ -182,6 +277,10 @@ int main ()
 				data.desc = arr[4];
 
 				semester_list.push_back(data);
+
+				std::ofstream outfile;
+				outfile.open("semester.txt", std::ios_base::app); // append instead of overwrite
+				outfile << data.id << " " << data.code << " " << data.year << " " << data.desc << endl; 
 			}
 
 			if( arr[1].compare("t") == 0 )
@@ -229,6 +328,10 @@ int main ()
 				data.semester_id = semester_id;
 			
 				take_list.push_back(data);
+
+				std::ofstream outfile;
+				outfile.open("take.txt", std::ios_base::app); // append instead of overwrite
+				outfile << data.student_id << " " << data.course_id << " " << data.grade_id << " " << data.semester_id << endl; 				
 			}
 		}
 		else if( arr[0].compare("l") == 0 )
