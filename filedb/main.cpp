@@ -381,6 +381,9 @@ int main ()
 				continue;
 			}
 
+			int hours = 0;
+			float gpa = 0.0f;
+
 			std::list<Semester>::iterator it3;
 			for (it3 = semester_list.begin(); it3 != semester_list.end(); ++it3)
 			{
@@ -405,7 +408,10 @@ int main ()
 					for (it1 = course_list.begin(); it1 != course_list.end(); ++it1)
 					{
 						if( it1->id == it4->course_id )
+						{
 							cout << it1->prefix << it1->number << " " << it1->title << "(" << it1->credit << ") ";
+							hours += it1->credit;
+						}
 					}
 
 					// find grade id					
@@ -413,12 +419,19 @@ int main ()
 					for (it2 = grade_list.begin(); it2 != grade_list.end(); ++it2)
 					{
 						if( it2->id == it4->grade_id )
+						{
 							cout << it2->type << endl;
+							gpa += it2->score;
+						}
 					}
 
 					count++;
 				}
 			}
+
+
+			cout << "SUTDENT HOURS COMPLETED:" << hours << endl;
+			cout << "SUTDENT GPA:" << gpa << endl;
 		}
 		else
 		{
