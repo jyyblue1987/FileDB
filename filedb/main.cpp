@@ -169,10 +169,12 @@ int main ()
 
 	while(true)
 	{
+		// read command line
 		getline(cin, param); 
 		if( param.compare("q") == 0 )
 			break;
 
+		// split command string
 		string arr[MAX_PARAM];
 		int param_count = 0;
 		stringstream ssin(param);
@@ -181,14 +183,14 @@ int main ()
 			++param_count;
 		}
 
-
+		// check param count
 		if( param_count < 1 )
 		{
 			cout << "Please input correct value" << endl;
 			continue;
 		}
 
-		if( arr[0].compare("a") == 0 )
+		if( arr[0].compare("a") == 0 ) // add mode
 		{
 			if( param_count < 2 )
 			{
@@ -196,8 +198,9 @@ int main ()
 				continue;
 			}
 
-			if( arr[1].compare("s") == 0 )
-			{
+			if( arr[1].compare("s") == 0 ) // add student mode
+			{	
+				// get last id of student
 				int last_id = 0;
 				if( student_list.size() > 0 )
 				{
@@ -205,20 +208,23 @@ int main ()
 					last_id = last.id;
 				}
 				Student data;
-				data.id = last_id + 1;
+				data.id = last_id + 1; // auto increment id
 				data.last_name = arr[2];
 				data.first_name = arr[3];
 				data.phone = arr[4];
 
+				// add student to list
 				student_list.push_back(data);
 
+				// save student data to table
 				std::ofstream outfile;
 				outfile.open("student.txt", std::ios_base::app); // append instead of overwrite
 				outfile << data.id << " " << data.last_name << " " << data.first_name << " " << data.phone << endl; 
 			}
 
-			if( arr[1].compare("c") == 0 )
+			if( arr[1].compare("c") == 0 ) // add course mode
 			{
+				// get last id of course
 				int last_id = 0;
 				if( course_list.size() > 0 )
 				{
@@ -227,14 +233,16 @@ int main ()
 				}
 
 				Course data;
-				data.id = last_id + 1;
+				data.id = last_id + 1; // auto increment id
 				data.prefix = arr[2];
 				data.number = stoi(arr[3]);
 				data.title = arr[4];
 				data.credit = stoi(arr[5]);
 
+				// add course to list
 				course_list.push_back(data);
 
+				// save course data to table
 				std::ofstream outfile;
 				outfile.open("course.txt", std::ios_base::app); // append instead of overwrite
 				outfile << data.id << " " << data.prefix << " " << data.number << " " << data.title << " " << data.credit << endl; 
@@ -242,6 +250,7 @@ int main ()
 
 			if( arr[1].compare("g") == 0 )
 			{
+				// get last id of grade
 				int last_id = 0;
 				if( grade_list.size() > 0 )
 				{
@@ -250,12 +259,14 @@ int main ()
 				}
 
 				Grade data;
-				data.id = last_id + 1;
+				data.id = last_id + 1; // auto increment id
 				data.type = arr[2];
 				data.score = stof(arr[3]);
 				
+				// add grade to list
 				grade_list.push_back(data);
 
+				// save grade data to table
 				std::ofstream outfile;
 				outfile.open("grade.txt", std::ios_base::app); // append instead of overwrite
 				outfile << data.id << " " << data.type << " " << data.score << endl; 
@@ -263,6 +274,7 @@ int main ()
 
 			if( arr[1].compare("m") == 0 )
 			{
+				// get last id of semester
 				int last_id = 0;
 				if( semester_list.size() > 0 )
 				{
@@ -271,13 +283,15 @@ int main ()
 				}
 
 				Semester data;
-				data.id = last_id + 1;
+				data.id = last_id + 1; // auto increment id
 				data.code = arr[2];
 				data.year = stoi(arr[3]);
 				data.desc = arr[4];
 
+				// add semester to list
 				semester_list.push_back(data);
 
+				// save semster data to table
 				std::ofstream outfile;
 				outfile.open("semester.txt", std::ios_base::app); // append instead of overwrite
 				outfile << data.id << " " << data.code << " " << data.year << " " << data.desc << endl; 
@@ -321,6 +335,7 @@ int main ()
 						semester_id = it3->id;
 				}
 
+				// add student to list
 				Take data;
 				data.student_id = student_id;
 				data.course_id = course_id;
@@ -329,68 +344,69 @@ int main ()
 			
 				take_list.push_back(data);
 
+				// save student data to table
 				std::ofstream outfile;
 				outfile.open("take.txt", std::ios_base::app); // append instead of overwrite
 				outfile << data.student_id << " " << data.course_id << " " << data.grade_id << " " << data.semester_id << endl; 				
 			}
 		}
-		else if( arr[0].compare("l") == 0 )
+		else if( arr[0].compare("l") == 0 )	// list mode
 		{
-			if( arr[1].compare("c") == 0 )
+			if( arr[1].compare("c") == 0 ) // course list 
 			{
 				std::list<Course>::iterator it1;
 				for (it1 = course_list.begin(); it1 != course_list.end(); ++it1)
 					cout << it1->prefix << " " << it1->number << " " << it1->title << " " << it1->credit << endl;				
 			}
 
-			if( arr[1].compare("g") == 0 )
+			if( arr[1].compare("g") == 0 ) // grade list
 			{
 				std::list<Grade>::iterator it1;
 				for (it1 = grade_list.begin(); it1 != grade_list.end(); ++it1)
 					cout << it1->type << " " << it1->score << endl;				
 			}
 
-			if( arr[1].compare("m") == 0 )
+			if( arr[1].compare("m") == 0 ) // semester list
 			{
 				std::list<Semester>::iterator it1;
 				for (it1 = semester_list.begin(); it1 != semester_list.end(); ++it1)
 					cout << it1->code << " " << it1->desc << " " << it1->year << endl;				
 			}
 
-			if( arr[1].compare("s") == 0 )
+			if( arr[1].compare("s") == 0 ) // student list
 			{
 				std::list<Student>::iterator it1;
 				for (it1 = student_list.begin(); it1 != student_list.end(); ++it1)
 					cout << it1->last_name << " " << it1->first_name << " " << it1->phone << endl;				
 			}
 
-			if( arr[1].compare("t") == 0 )
+			if( arr[1].compare("t") == 0 ) // take course list
 			{
 				std::list<Take>::iterator it1;
-				for (it1 = take_list.begin(); it1 != take_list.end(); ++it1)
+				for (it1 = take_list.begin(); it1 != take_list.end(); ++it1)	// iterate taken course list
 				{
-					std::list<Student>::iterator it2;
+					std::list<Student>::iterator it2; // find student by student_id
 					for (it2 = student_list.begin(); it2 != student_list.end(); ++it2)
 					{
 						if( it1->student_id == it2->id )
 							cout << it2->last_name << " " << it2->first_name << " ";
 					}
 
-					std::list<Semester>::iterator it4;
+					std::list<Semester>::iterator it4; // find semester by semester_id
 					for (it4 = semester_list.begin(); it4 != semester_list.end(); ++it4)
 					{
 						if( it1->semester_id == it4->id )
 							cout << it4->code << " ";
 					}
 
-					std::list<Course>::iterator it3;
+					std::list<Course>::iterator it3; // find course by course_id
 					for (it3 = course_list.begin(); it3 != course_list.end(); ++it3)
 					{
 						if( it1->course_id == it3->id )
 							cout << it3->prefix << " " << it3->number << " " << it3->title << " ";
 					}
 
-					std::list<Grade>::iterator it5;
+					std::list<Grade>::iterator it5; // find grade by grade_id
 					for (it5 = grade_list.begin(); it5 != grade_list.end(); ++it5)
 					{
 						if( it1->grade_id == it5->id )
@@ -421,7 +437,7 @@ int main ()
 			float gpa = 0.0f;
 
 			std::list<Semester>::iterator it3;
-			for (it3 = semester_list.begin(); it3 != semester_list.end(); ++it3)
+			for (it3 = semester_list.begin(); it3 != semester_list.end(); ++it3) // group by semester
 			{
 				int semester_id = it3->id;
 
