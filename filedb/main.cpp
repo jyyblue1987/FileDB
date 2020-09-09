@@ -2,6 +2,7 @@
 #include <list>
 #include <vector>
 #include <sstream>
+#include <fstream>
 
 using namespace std;
 
@@ -51,9 +52,32 @@ int main ()
 	list<Semester> semester_list = list<Semester>();
 	list<Take> take_list = list<Take>();
 
+	string param;
+	
+	// read student list
+	std::ifstream infile("student.txt");	
+	while (std::getline(infile, param))
+	{
+		string arr[MAX_PARAM];
+		int param_count = 0;
+		stringstream ssin(param);
+		while (ssin.good() && param_count < MAX_PARAM)
+		{
+			ssin >> arr[param_count];
+			++param_count;
+		}
+
+		Student data;
+		data.id = stoi(arr[0]);
+		data.last_name = arr[1];
+		data.first_name = arr[2];
+		data.phone = arr[3];
+
+		student_list.push_back(data);
+	}
+
 	cout << "start program" << endl;
 
-	string param;
 
 	while(true)
 	{
@@ -99,6 +123,11 @@ int main ()
 				data.phone = arr[4];
 
 				student_list.push_back(data);
+
+				std::ofstream outfile;
+
+				outfile.open("student.txt", std::ios_base::app); // append instead of overwrite
+				outfile << data.id << " " << data.last_name << " " << data.first_name << " " << data.phone << endl; 
 			}
 
 			if( arr[1].compare("c") == 0 )
