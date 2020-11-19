@@ -3,6 +3,9 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+#include "mysql\mysql.h"
+
+#pragma comment (lib,"libmysql.lib")
 
 using namespace std;
 
