@@ -157,271 +157,177 @@ int main ()
 
 			if( arr[1].compare("c") == 0 ) // add course mode
 			{
-				// get last id of course
-				int last_id = 0;
-				if( course_list.size() > 0 )
-				{
-					Course last = course_list.back();
-					last_id = last.id;
-				}
-
-				Course data;
-				data.id = last_id + 1; // auto increment id
-				data.prefix = arr[2];
-				data.number = stoi(arr[3]);
-				data.title = arr[4];
-				data.credit = stoi(arr[5]);
-
-				// add course to list
-				course_list.push_back(data);
-
-				// save course data to table
-				std::ofstream outfile;
-				outfile.open("course.txt", std::ios_base::app); // append instead of overwrite
-				outfile << data.id << " " << data.prefix << " " << data.number << " " << data.title << " " << data.credit << endl; 
+				sprintf(query, "INSERT INTO course (prefix, number, title, credit) VALUES ('%s', %d, '%s', %d)", arr[2].c_str(), stoi(arr[3]), arr[4].c_str(), stoi(arr[5])); 				
+				mysql_query(conn, query);
 			}
 
 			if( arr[1].compare("g") == 0 )
 			{
-				// get last id of grade
-				int last_id = 0;
-				if( grade_list.size() > 0 )
-				{
-					Grade last = grade_list.back();
-					last_id = last.id;
-				}
-
-				Grade data;
-				data.id = last_id + 1; // auto increment id
-				data.type = arr[2];
-				data.score = stof(arr[3]);
-				
-				// add grade to list
-				grade_list.push_back(data);
-
-				// save grade data to table
-				std::ofstream outfile;
-				outfile.open("grade.txt", std::ios_base::app); // append instead of overwrite
-				outfile << data.id << " " << data.type << " " << data.score << endl; 
+				sprintf(query, "INSERT INTO grade (type, score) VALUES ('%s', %f)", arr[2].c_str(), stof(arr[3])); 				
+				mysql_query(conn, query);
 			}
 
 			if( arr[1].compare("m") == 0 )
 			{
-				// get last id of semester
-				int last_id = 0;
-				if( semester_list.size() > 0 )
-				{
-					Semester last = semester_list.back();
-					last_id = last.id;
-				}
-
-				Semester data;
-				data.id = last_id + 1; // auto increment id
-				data.code = arr[2];
-				data.year = stoi(arr[3]);
-				data.desc = arr[4];
-
-				// add semester to list
-				semester_list.push_back(data);
-
-				// save semster data to table
-				std::ofstream outfile;
-				outfile.open("semester.txt", std::ios_base::app); // append instead of overwrite
-				outfile << data.id << " " << data.code << " " << data.year << " " << data.desc << endl; 
+				sprintf(query, "INSERT INTO semester (code, year, `desc`) VALUES ('%s', %d, '%s')", arr[2].c_str(), stoi(arr[3]), arr[4].c_str()); 				
+				mysql_query(conn, query);
 			}
 
 			if( arr[1].compare("t") == 0 )
 			{
 				// find student id
+				sprintf(query, "SELECT id FROM student WHERE last_name = '%s' AND first_name = '%s' LIMIT 1", arr[2].c_str(), arr[3].c_str()); 				
+				mysql_query(conn, query);
+				res = mysql_use_result(conn);
+				row = mysql_fetch_row(res);
 				int student_id = 0;
-				std::list<Student>::iterator it;
-				for (it = student_list.begin(); it != student_list.end(); ++it)
-				{
-					if( it->last_name.compare(arr[2]) == 0 && it->first_name.compare(arr[3]) == 0 )
-						student_id = it->id;
-				}
-
-				// find course id
+				if (row)
+					student_id = atoi(row[0]);
+				mysql_free_result(res);		
+				
+				// find course id				
+				sprintf(query, "SELECT id FROM course WHERE prefix = '%s' AND number = %d LIMIT 1", arr[4].c_str(), stoi(arr[5])); 				
+				mysql_query(conn, query);
+				res = mysql_use_result(conn);
+				row = mysql_fetch_row(res);				
 				int course_id = 0;
-				std::list<Course>::iterator it1;
-				for (it1 = course_list.begin(); it1 != course_list.end(); ++it1)
-				{
-					if( it1->prefix.compare(arr[4]) == 0 && it1->number == stoi(arr[5]) )
-						course_id = it1->id;
-				}
+				if (row)
+					course_id = atoi(row[0]);
+				mysql_free_result(res);
 
+				
 				// find grade id
+				sprintf(query, "SELECT id FROM grade WHERE type = '%s' LIMIT 1", arr[6].c_str()); 				
+				mysql_query(conn, query);
+				res = mysql_use_result(conn);
+				row = mysql_fetch_row(res);				
 				int grade_id = 0;
-				std::list<Grade>::iterator it2;
-				for (it2 = grade_list.begin(); it2 != grade_list.end(); ++it2)
-				{
-					if( it2->type.compare(arr[6]) == 0)
-						grade_id = it2->id;
-				}
+				if (row)
+					grade_id = atoi(row[0]);
+				mysql_free_result(res);
 
 				// find semester id
+				sprintf(query, "SELECT id FROM semester WHERE code = '%s' LIMIT 1", arr[7].c_str()); 				
+				mysql_query(conn, query);
+				res = mysql_use_result(conn);
+				row = mysql_fetch_row(res);				
 				int semester_id = 0;
-				std::list<Semester>::iterator it3;
-				for (it3 = semester_list.begin(); it3 != semester_list.end(); ++it3)
-				{
-					if( it3->code.compare(arr[7]) == 0)
-						semester_id = it3->id;
-				}
+				if (row)
+					semester_id = atoi(row[0]);
+				mysql_free_result(res);
 
-				// add student to list
-				Take data;
-				data.student_id = student_id;
-				data.course_id = course_id;
-				data.grade_id = grade_id;
-				data.semester_id = semester_id;
-			
-				take_list.push_back(data);
-
-				// save student data to table
-				std::ofstream outfile;
-				outfile.open("take.txt", std::ios_base::app); // append instead of overwrite
-				outfile << data.student_id << " " << data.course_id << " " << data.grade_id << " " << data.semester_id << endl; 				
+				sprintf(query, "INSERT INTO take (student_id, course_id, grade_id, semester_id) VALUES (%d, %d, %d, %d)", student_id, course_id, grade_id, semester_id); 				
+				mysql_query(conn, query);
 			}
 		}
 		else if( arr[0].compare("l") == 0 )	// list mode
 		{
 			if( arr[1].compare("c") == 0 ) // course list 
 			{
-				std::list<Course>::iterator it1;
-				for (it1 = course_list.begin(); it1 != course_list.end(); ++it1)
-					cout << it1->prefix << " " << it1->number << " " << it1->title << " " << it1->credit << endl;				
+				sprintf(query, "SELECT * FROM course"); 	
+				mysql_query(conn, query);
+				res = mysql_use_result(conn);
+				
+				while((row=mysql_fetch_row(res))!=NULL)
+					cout << row[1] << " " << row[2] << " " << row[3] << " " << row[4] << endl;				
+				
+				mysql_free_result(res);
 			}
 
 			if( arr[1].compare("g") == 0 ) // grade list
 			{
-				std::list<Grade>::iterator it1;
-				for (it1 = grade_list.begin(); it1 != grade_list.end(); ++it1)
-					cout << it1->type << " " << it1->score << endl;				
+				sprintf(query, "SELECT * FROM grade"); 				
+				mysql_query(conn, query);
+				res = mysql_use_result(conn);
+
+				while((row=mysql_fetch_row(res))!=NULL)
+					cout << row[1] << " " << row[2] << endl;				
+				
+				mysql_free_result(res);
 			}
 
 			if( arr[1].compare("m") == 0 ) // semester list
 			{
-				std::list<Semester>::iterator it1;
-				for (it1 = semester_list.begin(); it1 != semester_list.end(); ++it1)
-					cout << it1->code << " " << it1->desc << " " << it1->year << endl;				
+				sprintf(query, "SELECT * FROM semester"); 	
+				mysql_query(conn, query);
+				res = mysql_use_result(conn);
+
+				while((row=mysql_fetch_row(res))!=NULL)
+					cout << row[1] << " " << row[2] << " " << row[3] << endl;				
+				
+				mysql_free_result(res);
 			}
 
 			if( arr[1].compare("s") == 0 ) // student list
 			{
-				std::list<Student>::iterator it1;
-				for (it1 = student_list.begin(); it1 != student_list.end(); ++it1)
-					cout << it1->last_name << " " << it1->first_name << " " << it1->phone << endl;				
+				sprintf(query, "SELECT * FROM student"); 
+				mysql_query(conn, query);
+				res = mysql_use_result(conn);
+
+				while((row=mysql_fetch_row(res))!=NULL)
+					cout << row[1] << " " << row[2] << " " << row[3] << endl;				
+
+				mysql_free_result(res);
 			}
 
 			if( arr[1].compare("t") == 0 ) // take course list
 			{
-				std::list<Take>::iterator it1;
-				for (it1 = take_list.begin(); it1 != take_list.end(); ++it1)	// iterate taken course list
-				{
-					std::list<Student>::iterator it2; // find student by student_id
-					for (it2 = student_list.begin(); it2 != student_list.end(); ++it2)
-					{
-						if( it1->student_id == it2->id )
-							cout << it2->last_name << " " << it2->first_name << " ";
-					}
+				sprintf(query, "SELECT b.last_name, b.first_name, c.code, d.prefix, d.number, d.title, e.type FROM take as a " 
+									"JOIN student as b ON a.student_id = b.id "  
+									"JOIN semester as c ON a.semester_id = c.id "  
+									"JOIN course as d ON a.course_id = d.id "  
+									"JOIN grade as e ON a.grade_id = e.id "
+									); 
+				mysql_query(conn, query);
+				res = mysql_use_result(conn);
 
-					std::list<Semester>::iterator it4; // find semester by semester_id
-					for (it4 = semester_list.begin(); it4 != semester_list.end(); ++it4)
-					{
-						if( it1->semester_id == it4->id )
-							cout << it4->code << " ";
-					}
+				while((row=mysql_fetch_row(res))!=NULL)
+					cout << row[1] << " " << row[2] << " " << row[3] << " " << row[4] << " " << row[5] << " " << row[6] << " " << row[7] << endl;				
 
-					std::list<Course>::iterator it3; // find course by course_id
-					for (it3 = course_list.begin(); it3 != course_list.end(); ++it3)
-					{
-						if( it1->course_id == it3->id )
-							cout << it3->prefix << " " << it3->number << " " << it3->title << " ";
-					}
-
-					std::list<Grade>::iterator it5; // find grade by grade_id
-					for (it5 = grade_list.begin(); it5 != grade_list.end(); ++it5)
-					{
-						if( it1->grade_id == it5->id )
-							cout << it5->type;
-					}
-					cout << endl;
-				}
+				mysql_free_result(res);
 			}
 		}
 		else if( arr[0].compare("t") == 0 )
 		{
-			// find student id
-			int student_id = 0;
-			std::list<Student>::iterator it;
-			for (it = student_list.begin(); it != student_list.end(); ++it)
-			{
-				if( it->last_name.compare(arr[1]) == 0 && it->first_name.compare(arr[2]) == 0 )
-					student_id = it->id;
-			}
-
-			if( student_id < 1 )
-			{
-				cout << "Invalid Student" << endl;
-				continue;
-			}
-
 			int hours = 0;
 			float gpa = 0.0f;
 
-			std::list<Semester>::iterator it3;
-			for (it3 = semester_list.begin(); it3 != semester_list.end(); ++it3) // group by semester
+			sprintf(query, "SELECT c.id, c.desc, c.year, d.prefix, d.number, d.title, d.credit, e.type, e.score FROM take as a " 
+				"JOIN student as b ON a.student_id = b.id "  
+				"JOIN semester as c ON a.semester_id = c.id "  
+				"JOIN course as d ON a.course_id = d.id "  
+				"JOIN grade as e ON a.grade_id = e.id " 
+				"WHERE b.last_name = '%s' AND b.first_name = '%s' " 
+				"ORDER BY c.id ", 
+				arr[1].c_str(), arr[2].c_str()
+				); 
+
+			mysql_query(conn, query);
+			res = mysql_use_result(conn);
+
+			int prev_id = -1;
+
+			while((row=mysql_fetch_row(res))!=NULL)
 			{
-				int semester_id = it3->id;
+				int course_id = atoi(row[0]);
+				if( course_id != prev_id )
+					cout << endl << "=========== Semester: " << row[1] << " " << row[2] << " ===========" << endl;
 
-				std::list<Take>::iterator it4;
-				int count = 0;
+				cout << row[3] << row[4] << " " << row[5] << "(" << row[6] << ") " << row[7] << endl;
 
-				for (it4 = take_list.begin(); it4 != take_list.end(); ++it4)
-				{
-					if( it4->student_id != student_id )
-						continue;
+				hours += atoi(row[6]);
+				gpa += atof(row[8]);
 
-					if( it4->semester_id != semester_id )
-						continue;
-
-					if( count == 0 )
-						cout << "=========== Semester: " << it3->desc << " " << it3->year << " ===========" << endl;
-					
-					// find course id
-					std::list<Course>::iterator it1;
-					for (it1 = course_list.begin(); it1 != course_list.end(); ++it1)
-					{
-						if( it1->id == it4->course_id )
-						{
-							cout << it1->prefix << it1->number << " " << it1->title << "(" << it1->credit << ") ";
-							hours += it1->credit;
-						}
-					}
-
-					// find grade id					
-					std::list<Grade>::iterator it2;
-					for (it2 = grade_list.begin(); it2 != grade_list.end(); ++it2)
-					{
-						if( it2->id == it4->grade_id )
-						{
-							cout << it2->type << endl;
-							gpa += it2->score;
-						}
-					}
-
-					count++;
-				}
+				prev_id = course_id;
 			}
-
-
+			mysql_free_result(res);
+			
 			cout << "SUTDENT HOURS COMPLETED:" << hours << endl;
 			cout << "SUTDENT GPA:" << gpa << endl;
 		}
 		else
 		{
 			cout << "Please input a or l or t value" << endl;
-
 		}
 
 	}
