@@ -46,6 +46,9 @@ struct Take {
 	int semester_id;
 };
 
+MYSQL *conn;
+MYSQL_RES *res;
+MYSQL_ROW row;
 
 int main ()
 {
@@ -59,117 +62,62 @@ int main ()
 
 	cout << "start program" << endl;
 	
-	// read student list
-	std::ifstream infile("student.txt");	
-	while (std::getline(infile, param))
-	{
-		string arr[MAX_PARAM];
-		int param_count = 0;
-		stringstream ssin(param);
-		while (ssin.good() && param_count < MAX_PARAM)
+	// read mysql connection	
+	cout << "Please input mysql information hostname, port, username, password, database: " << endl;
+
+	string hostname = "localhost";
+	int port = 3306;
+	string username = "root";
+	string password = "";
+	string dbname = "school";
+	
+	conn = mysql_init(NULL);
+
+	while(true)
+	{		
+		// read command line
+		//getline(cin, param); 
+		//if( param.compare("q") == 0 )
+		//	break;
+
+		//// split command string
+		//string arr[MAX_PARAM];
+		//int param_count = 0;
+		//stringstream ssin(param);
+		//while (ssin.good() && param_count < MAX_PARAM){
+		//	ssin >> arr[param_count];
+		//	++param_count;
+		//}
+
+		//// check param count
+		//if( param_count < 4 )
+		//{
+		//	cout << "Please input correct value" << endl;
+		//	continue;
+		//}
+
+		//hostname = arr[0];
+		//port = stoi(arr[1]);
+		//username = arr[2];
+		//password = "";
+		//dbname = "";
+	//	if( param_count < 5 )			
+	//		dbname = arr[3];
+	//	else
+	//	{
+	//		password = arr[3];
+	//		dbname = arr[4];
+	//	}
+
+		if (!mysql_real_connect(conn, hostname.c_str(), username.c_str(), password.c_str(), dbname.c_str(), port, NULL, 0))
 		{
-			ssin >> arr[param_count];
-			++param_count;
+			cout << "Can not connect db!!!, Please input again:" << endl;
+			continue;
 		}
-
-		Student data;
-		data.id = stoi(arr[0]);
-		data.last_name = arr[1];
-		data.first_name = arr[2];
-		data.phone = arr[3];
-
-		student_list.push_back(data);
-	}
-
-	// read course list
-	std::ifstream infile1("course.txt");	
-	while (std::getline(infile1, param))
-	{
-		string arr[MAX_PARAM];
-		int param_count = 0;
-		stringstream ssin(param);
-		while (ssin.good() && param_count < MAX_PARAM)
-		{
-			ssin >> arr[param_count];
-			++param_count;
-		}
-
-		Course data;
-		data.id = stoi(arr[0]);
-		data.prefix = arr[1];
-		data.number = stoi(arr[2]);
-		data.title = arr[3];
-		data.credit = stoi(arr[4]);
-
-		course_list.push_back(data);
-	}
-
-	// read grade list
-	std::ifstream infile2("grade.txt");	
-	while (std::getline(infile2, param))
-	{
-		string arr[MAX_PARAM];
-		int param_count = 0;
-		stringstream ssin(param);
-		while (ssin.good() && param_count < MAX_PARAM)
-		{
-			ssin >> arr[param_count];
-			++param_count;
-		}
-
-		Grade data;
-		data.id = stoi(arr[0]);
-		data.type = arr[1];
-		data.score = stof(arr[2]);
-
-		grade_list.push_back(data);
-	}
-
-	// read semester list
-	std::ifstream infile3("semester.txt");	
-	while (std::getline(infile3, param))
-	{
-		string arr[MAX_PARAM];
-		int param_count = 0;
-		stringstream ssin(param);
-		while (ssin.good() && param_count < MAX_PARAM)
-		{
-			ssin >> arr[param_count];
-			++param_count;
-		}
-
-		Semester data;
-		data.id = stoi(arr[0]);
-		data.code = arr[1];
-		data.year = stoi(arr[2]);
-		data.desc = arr[3];
-
-		semester_list.push_back(data);
+		break;
 	}
 	
-	// read take list
-	std::ifstream infile4("take.txt");	
-	while (std::getline(infile4, param))
-	{
-		string arr[MAX_PARAM];
-		int param_count = 0;
-		stringstream ssin(param);
-		while (ssin.good() && param_count < MAX_PARAM)
-		{
-			ssin >> arr[param_count];
-			++param_count;
-		}
-
-		Take data;
-		data.student_id = stoi(arr[0]);
-		data.course_id = stoi(arr[1]);
-		data.grade_id = stoi(arr[2]);
-		data.semester_id = stoi(arr[3]);
-
-		take_list.push_back(data);
-	}
-
-
+	char query[1000];
 	while(true)
 	{
 		// read command line
@@ -203,26 +151,8 @@ int main ()
 
 			if( arr[1].compare("s") == 0 ) // add student mode
 			{	
-				// get last id of student
-				int last_id = 0;
-				if( student_list.size() > 0 )
-				{
-					Student last = student_list.back();
-					last_id = last.id;
-				}
-				Student data;
-				data.id = last_id + 1; // auto increment id
-				data.last_name = arr[2];
-				data.first_name = arr[3];
-				data.phone = arr[4];
-
-				// add student to list
-				student_list.push_back(data);
-
-				// save student data to table
-				std::ofstream outfile;
-				outfile.open("student.txt", std::ios_base::app); // append instead of overwrite
-				outfile << data.id << " " << data.last_name << " " << data.first_name << " " << data.phone << endl; 
+				sprintf(query, "INSERT INTO student (last_name, first_name, phone) VALUES ('%s', '%s', '%s')", arr[2].c_str(), arr[3].c_str(), arr[4].c_str()); 				
+				mysql_query(conn, query);
 			}
 
 			if( arr[1].compare("c") == 0 ) // add course mode
@@ -495,6 +425,9 @@ int main ()
 		}
 
 	}
+
+	mysql_close(conn);
+
 	cout << "end program";
 }
 
