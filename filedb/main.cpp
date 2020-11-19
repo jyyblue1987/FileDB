@@ -11,40 +11,6 @@ using namespace std;
 
 #define MAX_STRING_LENGTH 100
 #define MAX_PARAM 10
-struct Student {
-	int id;
-	string last_name;
-	string first_name;
-	string phone;
-};
-
-struct Course {
-	int id;
-	string prefix;
-	int number;
-	string title;
-	int credit;
-};
-
-struct Grade {
-	int id;
-	string type;
-	float score;	
-};
-
-struct Semester {
-	int id;
-	string code;
-	int year;	
-	string desc;
-};
-
-struct Take {
-	int student_id;
-	int course_id;
-	int grade_id;	
-	int semester_id;
-};
 
 MYSQL *conn;
 MYSQL_RES *res;
@@ -52,12 +18,6 @@ MYSQL_ROW row;
 
 int main ()
 {
-	list<Student> student_list = list<Student>();
-	list<Course> course_list = list<Course>();
-	list<Grade> grade_list = list<Grade>();
-	list<Semester> semester_list = list<Semester>();
-	list<Take> take_list = list<Take>();
-
 	string param;
 
 	cout << "start program" << endl;
@@ -76,44 +36,46 @@ int main ()
 	while(true)
 	{		
 		// read command line
-		//getline(cin, param); 
-		//if( param.compare("q") == 0 )
-		//	break;
+		getline(cin, param); 
+		if( param.compare("q") == 0 )
+			break;
 
-		//// split command string
-		//string arr[MAX_PARAM];
-		//int param_count = 0;
-		//stringstream ssin(param);
-		//while (ssin.good() && param_count < MAX_PARAM){
-		//	ssin >> arr[param_count];
-		//	++param_count;
-		//}
+		// split command string
+		string arr[MAX_PARAM];
+		int param_count = 0;
+		stringstream ssin(param);
+		while (ssin.good() && param_count < MAX_PARAM){
+			ssin >> arr[param_count];
+			++param_count;
+		}
 
-		//// check param count
-		//if( param_count < 4 )
-		//{
-		//	cout << "Please input correct value" << endl;
-		//	continue;
-		//}
+		// check param count
+		if( param_count < 4 )
+		{
+			cout << "Please input correct value" << endl;
+			continue;
+		}
 
-		//hostname = arr[0];
-		//port = stoi(arr[1]);
-		//username = arr[2];
-		//password = "";
-		//dbname = "";
-	//	if( param_count < 5 )			
-	//		dbname = arr[3];
-	//	else
-	//	{
-	//		password = arr[3];
-	//		dbname = arr[4];
-	//	}
+		hostname = arr[0];
+		port = stoi(arr[1]);
+		username = arr[2];
+		password = "";
+		dbname = "";
+		if( param_count < 5 )			
+			dbname = arr[3];
+		else
+		{
+			password = arr[3];
+			dbname = arr[4];
+		}
 
 		if (!mysql_real_connect(conn, hostname.c_str(), username.c_str(), password.c_str(), dbname.c_str(), port, NULL, 0))
 		{
 			cout << "Can not connect db!!!, Please input again:" << endl;
 			continue;
 		}
+
+		cout << "db is connected successfully" << endl;
 		break;
 	}
 	
@@ -272,7 +234,7 @@ int main ()
 
 			if( arr[1].compare("t") == 0 ) // take course list
 			{
-				sprintf(query, "SELECT b.last_name, b.first_name, c.code, d.prefix, d.number, d.title, e.type FROM take as a " 
+				sprintf(query, "SELECT a.id, b.last_name, b.first_name, c.code, d.prefix, d.number, d.title, e.type FROM take as a " 
 									"JOIN student as b ON a.student_id = b.id "  
 									"JOIN semester as c ON a.semester_id = c.id "  
 									"JOIN course as d ON a.course_id = d.id "  
