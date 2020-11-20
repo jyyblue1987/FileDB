@@ -1,5 +1,5 @@
-Name: 
-Date: 2020-09-09
+Name: Berdan Sonmez
+Date: 2020-11-22
 Platform: Windows
 Compile: Build main.cpp using Visual Studio 2015
 Bug: If user provide the smaller of command string than which is needed.
@@ -11,35 +11,36 @@ Brief Summary:
 
     Table Design is as follow.
 
-    Student {
+    student {
         id: int primary key auto increment
-        last_name: text
-        first_name: text
-        phone: text
+        last_name: varchar(30)
+        first_name: varchar(30)
+        phone: varchar(30)
     }
 
-    Course {
+    course {
         id: int primary key auto increment
-        prefix: text
-        number: text
-        title: text
+        prefix: varchar(20)
+        number: int
+        title: varchar(40)
         credit: int
     }
 
-    Grade {
+    grade {
         id: int primary key auto increment
-        code: type
+        type: varchar(30)
         score: float              
     }
 
-    Semester {
+    semester {
         id: int primary key auto increment
-        code: text
+        code: varchar(20)
         year: int
         desc: text        
     }
 
-    Take {        
+    Take {     
+        id: int primary key auto increment
         student_id: int
         course_id: int
         grade_id: int
