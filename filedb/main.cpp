@@ -1,18 +1,15 @@
 #include <iostream>
-#include <list>
-#include <vector>
 #include <sstream>
-#include <fstream>
 #include "mysql\mysql.h"
 
 #pragma comment (lib,"libmysql.lib")
 
 using namespace std;
 
-#define MAX_STRING_LENGTH 100
 #define MAX_PARAM 10
 
-MYSQL *conn;
+// define mysql connection variabl
+MYSQL *conn;	
 MYSQL_RES *res;
 MYSQL_ROW row;
 
@@ -50,7 +47,7 @@ int main ()
 		}
 
 		// check param count
-		if( param_count < 4 )
+		if( param_count < 4 )	// if not provide sufficient information about connection
 		{
 			cout << "Please input correct value" << endl;
 			continue;
@@ -61,14 +58,15 @@ int main ()
 		username = arr[2];
 		password = "";
 		dbname = "";
-		if( param_count < 5 )			
+		if( param_count < 5 ) // empty password
 			dbname = arr[3];
-		else
+		else // non empty password
 		{
 			password = arr[3];
 			dbname = arr[4];
 		}
 
+		// connect mysql
 		if (!mysql_real_connect(conn, hostname.c_str(), username.c_str(), password.c_str(), dbname.c_str(), port, NULL, 0))
 		{
 			cout << "Can not connect db!!!, Please input again:" << endl;
@@ -123,21 +121,21 @@ int main ()
 				mysql_query(conn, query);
 			}
 
-			if( arr[1].compare("g") == 0 )
+			if( arr[1].compare("g") == 0 ) // add greade mode
 			{
 				sprintf(query, "INSERT INTO grade (type, score) VALUES ('%s', %f)", arr[2].c_str(), stof(arr[3])); 				
 				mysql_query(conn, query);
 			}
 
-			if( arr[1].compare("m") == 0 )
+			if( arr[1].compare("m") == 0 )	// add semester
 			{
 				sprintf(query, "INSERT INTO semester (code, year, `desc`) VALUES ('%s', %d, '%s')", arr[2].c_str(), stoi(arr[3]), arr[4].c_str()); 				
 				mysql_query(conn, query);
 			}
 
-			if( arr[1].compare("t") == 0 )
+			if( arr[1].compare("t") == 0 ) // add course taken
 			{
-				// find student id
+				// find student id using last name and first name
 				sprintf(query, "SELECT id FROM student WHERE last_name = '%s' AND first_name = '%s' LIMIT 1", arr[2].c_str(), arr[3].c_str()); 				
 				mysql_query(conn, query);
 				res = mysql_use_result(conn);
@@ -147,7 +145,7 @@ int main ()
 					student_id = atoi(row[0]);
 				mysql_free_result(res);		
 				
-				// find course id				
+				// find course id using prefix and number				
 				sprintf(query, "SELECT id FROM course WHERE prefix = '%s' AND number = %d LIMIT 1", arr[4].c_str(), stoi(arr[5])); 				
 				mysql_query(conn, query);
 				res = mysql_use_result(conn);
@@ -158,7 +156,7 @@ int main ()
 				mysql_free_result(res);
 
 				
-				// find grade id
+				// find grade id using grade type
 				sprintf(query, "SELECT id FROM grade WHERE type = '%s' LIMIT 1", arr[6].c_str()); 				
 				mysql_query(conn, query);
 				res = mysql_use_result(conn);
@@ -168,7 +166,7 @@ int main ()
 					grade_id = atoi(row[0]);
 				mysql_free_result(res);
 
-				// find semester id
+				// find semester id using code
 				sprintf(query, "SELECT id FROM semester WHERE code = '%s' LIMIT 1", arr[7].c_str()); 				
 				mysql_query(conn, query);
 				res = mysql_use_result(conn);
@@ -178,6 +176,7 @@ int main ()
 					semester_id = atoi(row[0]);
 				mysql_free_result(res);
 
+				// insert course taken using ids
 				sprintf(query, "INSERT INTO take (student_id, course_id, grade_id, semester_id) VALUES (%d, %d, %d, %d)", student_id, course_id, grade_id, semester_id); 				
 				mysql_query(conn, query);
 			}
@@ -249,11 +248,13 @@ int main ()
 				mysql_free_result(res);
 			}
 		}
-		else if( arr[0].compare("t") == 0 )
+		else if( arr[0].compare("t") == 0 ) // course list group by semester
 		{
 			int hours = 0;
 			float gpa = 0.0f;
 
+			// find course take list for selected last name and first name
+			// and order by semester
 			sprintf(query, "SELECT c.id, c.desc, c.year, d.prefix, d.number, d.title, d.credit, e.type, e.score FROM take as a " 
 				"JOIN student as b ON a.student_id = b.id "  
 				"JOIN semester as c ON a.semester_id = c.id "  
@@ -269,16 +270,19 @@ int main ()
 
 			int prev_id = -1;
 
+			// read query ressult one by one
 			while((row=mysql_fetch_row(res))!=NULL)
 			{
 				int course_id = atoi(row[0]);
-				if( course_id != prev_id )
+				if( course_id != prev_id )	// if new semester, print semenster information.
 					cout << endl << "=========== Semester: " << row[1] << " " << row[2] << " ===========" << endl;
 
+				// print course information
 				cout << row[3] << row[4] << " " << row[5] << "(" << row[6] << ") " << row[7] << endl;
 
+				// calucate hours and gpa
 				hours += atoi(row[6]);
-				gpa += atof(row[8]);
+				gpa += (float)atof(row[8]);
 
 				prev_id = course_id;
 			}
