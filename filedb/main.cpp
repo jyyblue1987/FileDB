@@ -248,6 +248,16 @@ int main ()
 				mysql_free_result(res);
 			}
 		}
+		else if( arr[0].compare("d") == 0 ) // course list group by semester
+		{
+			// delete student for selected last name and first name			
+			sprintf(query, "DELETE FROM student "
+				"WHERE last_name = '%s' AND first_name = '%s' ", 				
+				arr[1].c_str(), arr[2].c_str()
+				);
+
+			mysql_query(conn, query);
+		}
 		else if( arr[0].compare("t") == 0 ) // course list group by semester
 		{
 			int hours = 0;
