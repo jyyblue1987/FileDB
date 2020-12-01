@@ -16,7 +16,7 @@ using namespace std;
 int main ()
 {
 
-	// define mysql connection variabl
+	// define mysql connection variables
 	MYSQL *conn;	
 	MYSQL_RES *res;
 	MYSQL_ROW row;
