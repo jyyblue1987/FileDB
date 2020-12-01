@@ -1,20 +1,26 @@
 #include <iostream>
+#include <string>
 #include <sstream>
-#include "mysql\mysql.h"
+#include <conio.h>
 
+#include "mysql\mysql.h"
 #pragma comment (lib,"libmysql.lib")
+
+//#include <my_global.h>
+//#include <mysql.h>
 
 using namespace std;
 
 #define MAX_PARAM 10
 
-// define mysql connection variabl
-MYSQL *conn;	
-MYSQL_RES *res;
-MYSQL_ROW row;
-
 int main ()
 {
+
+	// define mysql connection variabl
+	MYSQL *conn;	
+	MYSQL_RES *res;
+	MYSQL_ROW row;
+
 	string param;
 
 	cout << "start program" << endl;
