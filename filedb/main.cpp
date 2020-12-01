@@ -67,7 +67,7 @@ int main ()
 		}
 
 		// connect mysql
-		if (!mysql_real_connect(conn, hostname.c_str(), username.c_str(), password.c_str(), dbname.c_str(), port, NULL, 0))
+		if (!mysql_real_connect(conn, hostname.c_str(), username.c_str(), password.c_str(), "", port, NULL, 0))
 		{
 			cout << "Can not connect db!!!, Please input again:" << endl;
 			continue;
@@ -78,6 +78,68 @@ int main ()
 	}
 	
 	char query[1000];
+
+	// create database
+	sprintf(query, "CREATE DATABASE IF NOT EXISTS %s", dbname.c_str()); 				
+	mysql_query(conn, query);
+
+	sprintf(query, "USE %s", dbname.c_str()); 				
+	mysql_query(conn, query);
+
+	cout << "db is created successfully" << endl;
+
+	// create tables
+	sprintf(query, "CREATE TABLE IF NOT EXISTS `course` ( "
+		"`id` int(11) unsigned NOT NULL AUTO_INCREMENT, "
+		"`prefix` varchar(20) DEFAULT NULL, "
+		"`number` int(11) DEFAULT NULL, "
+		"`title` varchar(40) DEFAULT NULL, "
+		"`credit` int(10) DEFAULT '0', "
+		"PRIMARY KEY (`id`) "
+		") ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+	mysql_query(conn, query);
+	cout << "`course` table is created successfully" << endl;
+
+	sprintf(query, "CREATE TABLE IF NOT EXISTS `grade` ( "
+		"`id` int(11) unsigned NOT NULL AUTO_INCREMENT, "
+		"`type` varchar(30) DEFAULT NULL, "
+		"`score` float DEFAULT '0', "
+		"PRIMARY KEY (`id`) "
+		") ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+	mysql_query(conn, query);
+	cout << "`grade` table is created successfully" << endl;
+
+	sprintf(query, "CREATE TABLE IF NOT EXISTS `semester` ( "
+		"`id` int(11) unsigned NOT NULL AUTO_INCREMENT, "
+		"`code` varchar(20) DEFAULT NULL, "
+		"`year` int(11) DEFAULT NULL, "
+		"`desc` text, "
+		"PRIMARY KEY (`id`) "
+		") ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+	mysql_query(conn, query);
+	cout << "`semester` table is created successfully" << endl;
+
+	sprintf(query, "CREATE TABLE IF NOT EXISTS `student` ( "
+		"`id` int(11) unsigned NOT NULL AUTO_INCREMENT, "
+		"`last_name` varchar(30) DEFAULT NULL, "
+		"`first_name` varchar(30) DEFAULT NULL, "
+		"`phone` varchar(30) DEFAULT NULL, "
+		"PRIMARY KEY (`id`) "
+		") ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+	mysql_query(conn, query);
+	cout << "`student` is created successfully" << endl;
+
+	sprintf(query, "CREATE TABLE IF NOT EXISTS `take` ( "
+		"`id` int(11) unsigned NOT NULL AUTO_INCREMENT, "
+		"`student_id` int(11) DEFAULT NULL, "
+		"`course_id` int(11) DEFAULT NULL, "
+		"`grade_id` int(11) DEFAULT NULL, "
+		"`semester_id` int(11) DEFAULT NULL, "
+		"PRIMARY KEY (`id`) "
+		") ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+	mysql_query(conn, query);
+	cout << "`take` table is created successfully" << endl;
+
 	while(true)
 	{
 		// read command line
