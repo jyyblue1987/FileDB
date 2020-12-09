@@ -52,6 +52,17 @@ int main ()
 	list<Semester> semester_list = list<Semester>();
 	list<Take> take_list = list<Take>();
 
+	//char a[100] = "";
+	//char b[100] = "";
+	//fgets(a, 100, stdin);
+
+	//char c;
+	//while(true) {
+	//	scanf("%c", &c);
+	//	if( c == '\n' )
+	//		break;
+	//}
+
 	string param;
 
 	cout << "start program" << endl;
